@@ -1,0 +1,39 @@
+name: Auto Actualizar Lista de Artículos
+
+on:
+  push:
+    branches:
+      - main  # Cambia a "master" si tu rama principal se llama así
+    paths:
+      - 'articulos/**' # El flujo solo se activa si añades o cambias algo en "articulos"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write # Da permiso a la Action para escribir y hacer push en tu repositorio
+
+    steps:
+    # 1. Descargar el código del repositorio
+    - name: Checkout repo
+      uses: actions/checkout@v4
+
+    # 2. Configurar Python en el servidor
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.x'
+
+    # 3. Ejecutar el script que creamos en el Paso 2
+    - name: Run update script
+      run: python actualizar_index.py
+
+    # 4. Guardar los cambios y subirlos al repositorio automáticamente
+    - name: Commit and Push changes
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@://github.com"
+        git add index.html
+        # Solo hace commit si realmente hay cambios en el index.html
+        git diff --quiet && git diff --staged --quiet || (git commit -m "Bot: Lista de artículos actualizada automáticamente" && git push)
