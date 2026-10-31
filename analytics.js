@@ -1,15 +1,15 @@
-// 1. Instrucción para crear y cargar la librería de Google desde su servidor
-var script1 = document.createElement('script');
-script1.async = true;
-script1.src = 'https://googletagmanager.com';
-document.head.appendChild(script1);
+// 1. Creamos el elemento para la librería de Google
+var gaScript = document.createElement('script');
+gaScript.async = true;
+gaScript.src = 'https://googletagmanager.com';
 
-// 2. Instrucción para activar el rastreador con tu ID de la web
-var script2 = document.createElement('script');
-script2.innerHTML = `
+// 2. TRUCO: Esperamos a que la librería se cargue por completo antes de activarla
+gaScript.onload = function() {
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
   gtag('config', 'G-9RKWSS4K6B');
-`;
-document.head.appendChild(script2);
+};
+
+// 3. Insertamos el script en la web
+document.head.appendChild(gaScript);
